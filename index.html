@@ -98,9 +98,9 @@ h2.sec{font-family:var(--serif);font-size:24px;font-weight:900;letter-spacing:.0
 
 /* ===== 结果 ===== */
 #result{padding:46px 0 60px}
-.seal{width:74px;height:74px;margin:0 auto;display:grid;place-items:center;transform:rotate(-7deg);
-  background:linear-gradient(135deg,#a63a2b,#7d2b20);border-radius:6px;box-shadow:0 6px 24px rgba(166,58,43,.45);animation:sealIn .8s ease both}
-.seal b{font-family:var(--serif);font-size:34px;color:#f3e2c8;font-weight:900}
+.seal{width:84px;height:84px;margin:0 auto;transform:rotate(-7deg);
+  filter:drop-shadow(0 6px 22px rgba(166,58,43,.45));animation:sealIn .8s ease both}
+.seal svg{width:100%;height:100%;display:block}
 .r-eyebrow{text-align:center;margin-top:22px;color:var(--gold);font-size:12px;letter-spacing:.5em;text-indent:.5em}
 .r-name{text-align:center;font-family:var(--serif);font-size:clamp(40px,11vw,58px);font-weight:900;letter-spacing:.1em;margin-top:8px;animation:inkIn 1.2s ease both .3s}
 .r-title{text-align:center;color:var(--paper-dim);font-size:14px;letter-spacing:.25em;margin-top:4px}
@@ -177,8 +177,10 @@ body.gate-on{overflow:hidden;height:100%}
 .gate-eyebrow{font-family:var(--serif);color:var(--gold);font-size:12px;letter-spacing:.5em;text-indent:.5em}
 .gate-title{font-family:var(--serif);font-size:32px;font-weight:900;letter-spacing:.2em;text-indent:.2em;margin-top:8px;color:var(--paper)}
 .gate-sub{color:var(--paper-dim);font-size:12.5px;letter-spacing:.18em;margin-top:8px}
-.gate-input{display:block;width:100%;margin:22px 0 0;background:rgba(233,223,199,.05);border:1px solid var(--line);border-radius:2px;color:var(--gold-hi);font-family:var(--serif);font-size:26px;font-weight:900;letter-spacing:.55em;text-indent:.55em;text-align:center;padding:13px 0;outline:none;caret-color:var(--gold);transition:border-color .25s,box-shadow .25s}
-.gate-input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,162,94,.35)}
+.gcells{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.gcell{width:38px;height:52px;text-align:center;background:rgba(233,223,199,.05);border:1px solid var(--line);border-radius:2px;color:var(--gold-hi);font-family:var(--serif);font-size:24px;font-weight:900;outline:none;caret-color:var(--gold);padding:0;transition:border-color .25s,box-shadow .25s}
+.gcell:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,162,94,.35),0 0 14px rgba(201,162,94,.2)}
+.gcell.fill{border-color:rgba(201,162,94,.55);background:rgba(201,162,94,.1)}
 .gate-btn{margin-top:16px;width:100%;background:linear-gradient(135deg,#a63a2b,#7d2b20);color:#f3e2c8;font-size:15px;padding:13px;border-radius:2px;box-shadow:0 8px 24px rgba(166,58,43,.3),inset 0 0 0 1px rgba(232,201,138,.3)}
 .gate-err{margin-top:12px;font-size:12px;color:#e08a76;letter-spacing:.15em;opacity:0;transition:opacity .3s}
 .gate-err.on{opacity:1}
@@ -187,13 +189,20 @@ body.gate-on{overflow:hidden;height:100%}
 </style>
 </head>
 <body class="gate-on">
-<div id="gate">
+<div id="gate" class="gate">
   <div class="gate-box">
     <div class="gate-seal"><b>镜</b></div>
     <div class="gate-eyebrow">观我 · 铜镜封印</div>
     <div class="gate-title">入镜密令</div>
     <div class="gate-sub">输入六位密令，方可开镜</div>
-    <input class="gate-input" id="gateInput" type="text" inputmode="numeric" maxlength="6" autocomplete="off">
+    <div class="gcells" id="gateCells">
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off" autofocus>
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="gcell" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+    </div>
     <button class="btn gate-btn" id="gateBtn">开 镜</button>
     <div class="gate-err" id="gateErr">密令不对，再试一次</div>
   </div>
@@ -244,7 +253,7 @@ body.gate-on{overflow:hidden;height:100%}
 
   <!-- 结果 -->
   <section class="screen" id="result">
-    <div class="seal"><b id="sealChar">观</b></div>
+    <div class="seal" id="sealBox"></div>
     <div class="r-eyebrow">镜 鉴 已 成</div>
     <h1 class="r-name" id="resultName">——</h1>
     <div class="r-title" id="resultTitle"></div>
@@ -318,20 +327,47 @@ body.gate-on{overflow:hidden;height:100%}
 <script>
 /* ========== 入镜门 ========== */
 const GATE_CODE="946071";
-const gateEl=document.getElementById("gate"),gateInput=document.getElementById("gateInput"),gateErr=document.getElementById("gateErr");
-gateInput.addEventListener("input",()=>{gateInput.value=gateInput.value.replace(/\D/g,"").slice(0,6);gateErr.classList.remove("on")});
+const gateEl=document.getElementById("gate"),gateErr=document.getElementById("gateErr");
+const cells=[...document.querySelectorAll("#gateCells .gcell")];
+const gateVal=()=>cells.map(c=>c.value).join("");
+function gateClear(){cells.forEach(c=>{c.value="";c.classList.remove("fill")});cells[0].focus()}
 function gateTry(){
-  if(gateInput.value.trim()===GATE_CODE){
+  if(gateVal()===GATE_CODE){
     document.body.classList.remove("gate-on");
     gateEl.classList.add("off");
+    const intro=document.getElementById("intro");
+    intro.classList.remove("on");void intro.offsetWidth;intro.classList.add("on");
+    setTimeout(()=>{gateEl.style.display="none"},450);
   }else{
     gateEl.classList.remove("shake");void gateEl.offsetWidth;gateEl.classList.add("shake");
     gateErr.classList.add("on");
-    gateInput.focus();gateInput.select();
+    gateClear();
   }
 }
+cells.forEach((c,i)=>{
+  c.addEventListener("focus",()=>c.select());
+  c.addEventListener("input",()=>{
+    c.value=c.value.replace(/\D/g,"").slice(-1);
+    c.classList.toggle("fill",!!c.value);
+    gateErr.classList.remove("on");
+    if(c.value){
+      if(i<5)cells[i+1].focus();
+      if(gateVal().length===6)gateTry();
+    }
+  });
+  c.addEventListener("keydown",e=>{
+    if(e.key==="Backspace"&&!c.value&&i>0){e.preventDefault();cells[i-1].value="";cells[i-1].classList.remove("fill");cells[i-1].focus()}
+    else if(e.key==="Enter")gateTry();
+  });
+  c.addEventListener("paste",e=>{
+    e.preventDefault();
+    const d=(e.clipboardData.getData("text").match(/\d/g)||[]).slice(0,6);
+    d.forEach((n,j)=>{cells[j].value=n;cells[j].classList.add("fill")});
+    gateErr.classList.remove("on");
+    if(gateVal().length===6)gateTry();else if(d.length)cells[Math.min(d.length,5)].focus();
+  });
+});
 document.getElementById("gateBtn").onclick=gateTry;
-gateInput.addEventListener("keydown",e=>{if(e.key==="Enter")gateTry()});
 
 /* ========== 配置 ========== */
 const SHOP_URL = ""; // ← 填入你的小红书店铺商品链接，留空则不显示完整报告入口
@@ -410,6 +446,19 @@ const ARCH={
 };
 
 const F=(name,gender,era,role,arch,quote)=>({name,gender,era,role,arch,quote});
+/* ===== 程序化印章：形制随人名哈希稳定随机，印色随朝代 ===== */
+const SEAL_PAL=[["#a63a2b","#7d2b20","#f3e2c8","#e8c98a"],["#9a4a1f","#6d3210","#f3e2c8","#e8c98a"],["#8d2f45","#5f1f30","#f3e2c8","#c9a25e"]];
+const SEAL_DYN={"春":0,"战":0,"秦":1,"汉":0,"晋":1,"隋":1,"唐":2,"宋":1,"元":2,"明":0,"清":2};
+const sealPal=p=>SEAL_PAL[SEAL_DYN[(p.era.match(/[汉唐宋元明清秦晋隋周战春]/)||["汉"])[0]]||0];
+const sealForm=p=>[...p.name].reduce((t,c)=>t+c.charCodeAt(0),0)%4;
+function sealSVG(p){
+  const pal=sealPal(p),ch=p.name[0],eraCh=(p.era.match(/[汉唐宋元明清秦晋隋周战春]/)||["汉"])[0],f=sealForm(p);
+  const T=(sz,fy)=>`<text x="60" y="${fy}" text-anchor="middle" font-size="${sz}" font-weight="900" font-family="'Noto Serif SC','SimSun',serif"`;
+  if(f===0)return `<svg viewBox="0 0 120 120"><rect x="6" y="6" width="108" height="108" rx="10" fill="${pal[0]}"/><rect x="18" y="18" width="84" height="84" fill="none" stroke="${pal[2]}" stroke-width="2"/><path d="M24 40V24h16M80 24h16v16M96 80v16H80M40 96H24V80" stroke="${pal[2]}" stroke-width="2.5" fill="none"/>${T(42,74)} fill="${pal[2]}">${ch}</text></svg>`;
+  if(f===1)return `<svg viewBox="0 0 120 120"><rect x="6" y="6" width="108" height="108" rx="10" fill="#e9dfc7"/><rect x="12" y="12" width="96" height="96" rx="7" fill="none" stroke="${pal[0]}" stroke-width="2"/><path d="M24 30c6-8 12-8 18 0s12 8 18 0M64 90c6-8 12-8 18 0s12 8 18 0" stroke="${pal[3]}" stroke-width="2" fill="none"/>${T(42,74)} fill="${pal[0]}">${ch}</text></svg>`;
+  if(f===2)return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="${pal[1]}"/><circle cx="60" cy="60" r="44" fill="none" stroke="${pal[2]}" stroke-width="1.5"/><text x="60" y="28" text-anchor="middle" font-size="12" fill="${pal[2]}" font-family="'Noto Serif SC',serif">${eraCh}</text><circle cx="60" cy="38" r="2" fill="${pal[3]}"/><circle cx="82" cy="60" r="2" fill="${pal[3]}"/><circle cx="60" cy="82" r="2" fill="${pal[3]}"/><circle cx="38" cy="60" r="2" fill="${pal[3]}"/>${T(38,74)} fill="${pal[2]}">${ch}</text></svg>`;
+  return `<svg viewBox="0 0 120 120"><g fill="${pal[0]}"><circle cx="60" cy="40" r="23"/><circle cx="80" cy="60" r="23"/><circle cx="60" cy="80" r="23"/><circle cx="40" cy="60" r="23"/><rect x="46" y="46" width="28" height="28" rx="7"/></g><path d="M44 90c12-5 26-5 36-2" stroke="${pal[2]}" stroke-width="2" fill="none" stroke-linecap="round"/>${T(36,72)} fill="${pal[2]}">${ch}</text></svg>`;
+}
 const PEOPLE=[
   F("秦始皇","male","秦","一统之局","helm","天下之势，合久必分，分久必合——而我选择让『合』先发生。"),
   F("李世民","male","唐","贞观之主","helm","以人为镜，可以明得失。"),
@@ -573,7 +622,7 @@ function countUp(el,to,dur){dur=dur||1200;const t0=performance.now();const step=
 
 function renderResult(){
   const {person,a,scores,similarity,top,top5,rarity,kin,poolSize}=state.result;
-  $("#sealChar").textContent=person.name.slice(0,1);
+  $("#sealBox").innerHTML=sealSVG(person);
   $("#resultName").textContent=person.name;
   $("#resultTitle").textContent=`${person.era} · ${person.role} · ${a.label}`;
   $("#resultQuote").textContent=`「${person.quote}」`;
@@ -653,7 +702,24 @@ function exportCard(){
   const para=(v,tx,ty,mw,sz,lh,col,w)=>{x.font=font(sz,w);x.fillStyle=col;x.textAlign="left";wrap(v,mw,sz,w).forEach((r,i)=>x.fillText(r,tx,ty+i*lh))};
   let y=M;
   // 头部
-  x.save();x.translate(W/2-40,y+58);x.rotate(-0.12);x.fillStyle="#a63a2b";x.fillRect(-34,-34,68,68);x.fillStyle="#f3e2c8";x.font=font(34,900);x.textAlign="center";x.textBaseline="middle";x.fillText(person.name[0],0,2);x.restore();
+  // 程序化印章（与结果页同款：形制随人名、印色随朝代）
+  const pal=sealPal(person),f=sealForm(person),ch=person.name[0],eraCh=(person.era.match(/[汉唐宋元明清秦晋隋周战春]/)||["汉"])[0];
+  x.save();x.translate(W/2,y+58);x.rotate(-0.12);x.textAlign="center";x.textBaseline="middle";
+  if(f===0){x.fillStyle=pal[0];x.fillRect(-42,-42,84,84);x.strokeStyle=pal[2];x.lineWidth=2;x.strokeRect(-36,-36,72,72);
+    x.lineWidth=2.5;[[-30,-30,1,1],[30,-30,-1,1],[30,30,-1,-1],[-30,30,1,-1]].forEach(([cx,cy,dx,dy])=>{x.beginPath();x.moveTo(cx,cy+13*dy);x.lineTo(cx,cy);x.lineTo(cx+13*dx,cy);x.stroke()});
+    x.fillStyle=pal[2];x.font=font(40,900);x.fillText(ch,0,2);
+  }else if(f===1){x.fillStyle="#e9dfc7";x.fillRect(-42,-42,84,84);x.strokeStyle=pal[0];x.lineWidth=2.5;x.strokeRect(-34,-34,68,68);
+    x.strokeStyle=pal[3];x.lineWidth=2;x.beginPath();x.moveTo(-30,-26);x.bezierCurveTo(-22,-34,-14,-34,-8,-26);x.stroke();x.beginPath();x.moveTo(8,26);x.bezierCurveTo(16,18,24,18,30,26);x.stroke();
+    x.fillStyle=pal[0];x.font=font(40,900);x.fillText(ch,0,2);
+  }else if(f===2){x.fillStyle=pal[1];x.beginPath();x.arc(0,0,44,0,7);x.fill();x.strokeStyle=pal[2];x.lineWidth=1.5;x.beginPath();x.arc(0,0,35,0,7);x.stroke();
+    x.fillStyle=pal[2];x.font=font(12,400);x.fillText(eraCh,0,-27);
+    x.fillStyle=pal[3];[[0,-24],[24,0],[0,24],[-24,0]].forEach(([px,py])=>{x.beginPath();x.arc(px,py,2,0,7);x.fill()});
+    x.fillStyle=pal[2];x.font=font(36,900);x.fillText(ch,0,4);
+  }else{x.fillStyle=pal[0];[[0,-22],[22,0],[0,22],[-22,0]].forEach(([px,py])=>{x.beginPath();x.arc(px,py,23,0,7);x.fill()});x.fillRect(-14,-14,28,28);
+    x.strokeStyle=pal[2];x.lineWidth=2;x.beginPath();x.moveTo(-16,30);x.quadraticCurveTo(0,24,18,28);x.stroke();
+    x.fillStyle=pal[2];x.font=font(34,900);x.fillText(ch,0,-2);
+  }
+  x.restore();
   x.fillStyle="#c9a25e";x.font=font(15,400);x.textAlign="center";x.textBaseline="alphabetic";
   x.fillText("观 我 · 镜 鉴 已 成",W/2,y+140);
   x.fillStyle="#e9dfc7";x.font=font(52,900);x.fillText(person.name,W/2,y+205);
