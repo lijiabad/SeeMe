@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d0b08">
+<title>观我 · 三千年来，你是谁的回声</title>
+<meta name="description" content="一份国风历史人格测试：十六个情境，一面铜镜，照出与你同骨的那位历史人物。">
+<style>
+:root{
+  --ink:#0d0b08; --ink2:#151209; --paper:#e9dfc7; --paper-dim:#a89872;
+  --gold:#c9a25e; --gold-hi:#e8c98a; --seal:#a63a2b; --line:rgba(201,162,94,.28);
+  --serif:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--ink);color:var(--paper);font-family:var(--sans);
+  overflow-x:hidden;line-height:1.7;
+}
+/* 纸纹噪点 + 晕影 */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.8 0 0 0 0 0.7 0 0 0 0 0.5 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse at 50% 30%,transparent 40%,rgba(0,0,0,.55) 100%);}
+main{position:relative;z-index:2;max-width:680px;margin:0 auto;padding:0 22px}
+.screen{display:none;animation:fadeIn .7s ease both}
+.screen:not(.on){display:none!important}
+.screen.on{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes inkIn{from{opacity:0;filter:blur(6px);letter-spacing:.5em}to{opacity:1;filter:blur(0);letter-spacing:.12em}}
+@keyframes sealIn{0%{opacity:0;transform:scale(1.6) rotate(-18deg)}60%{opacity:1;transform:scale(.94) rotate(-6deg)}100%{opacity:1;transform:scale(1) rotate(-7deg)}}
+@keyframes drawline{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+
+/* ===== 开场 ===== */
+#intro{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:0;overflow:hidden}
+.vtitle{writing-mode:vertical-rl;font-family:var(--serif);font-weight:900;
+  font-size:clamp(52px,13vw,84px);letter-spacing:.12em;color:var(--paper);
+  text-shadow:0 0 40px rgba(201,162,94,.25);animation:inkIn 1.4s ease both .2s}
+.vtitle em{font-style:normal;color:var(--gold-hi)}
+.intro-sub{margin-top:12px;font-family:var(--serif);color:var(--paper-dim);
+  font-size:14px;letter-spacing:.45em;text-indent:.45em;animation:fadeUp 1s ease both .9s}
+.intro-rule{width:52px;height:1px;background:var(--line);margin:12px auto;animation:fadeUp 1s ease both 1.1s}
+.intro-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s ease both 1.25s}
+.intro-tags span{font-size:11px;color:var(--gold);border:1px solid var(--line);padding:4px 12px;border-radius:2px;letter-spacing:.2em}
+.btn{font-family:var(--serif);cursor:pointer;border:none;letter-spacing:.35em;text-indent:.35em;
+  transition:transform .2s,box-shadow .2s,background .3s}
+.btn:active{transform:scale(.97)}
+.btn-main{margin-top:20px;animation:fadeUp 1s ease both 1.45s;
+  background:linear-gradient(135deg,#a63a2b,#7d2b20);color:#f3e2c8;font-size:16px;
+  padding:14px 46px;border-radius:2px;box-shadow:0 8px 30px rgba(166,58,43,.35),inset 0 0 0 1px rgba(232,201,138,.35)}
+.btn-main:hover{box-shadow:0 10px 36px rgba(166,58,43,.5)}
+.intro-foot{margin-top:14px;font-size:11px;color:#6b5f49;letter-spacing:.3em;animation:fadeUp 1s ease both 1.7s}
+
+/* ===== 偏好 ===== */
+#preference{padding-top:1px}
+.chapter{font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:.5em;margin:20px 0 8px;display:flex;align-items:center;gap:14px}
+.chapter::after{content:"";flex:1;height:1px;background:var(--line)}
+h2.sec{font-family:var(--serif);font-size:24px;font-weight:900;letter-spacing:.08em;margin-bottom:4px}
+.sec-sub{color:var(--paper-dim);font-size:13px;margin-bottom:18px}
+.pref-grid{display:grid;gap:10px}
+.pref{display:flex;align-items:center;gap:16px;padding:12px 16px;cursor:pointer;background:rgba(233,223,199,.03);
+  border:1px solid var(--line);border-radius:3px;transition:border-color .25s,background .25s;font-family:var(--sans)}
+.pref.sel{border-color:var(--gold);background:rgba(201,162,94,.09)}
+.pref .mark{width:36px;height:36px;flex:none;display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:16px;
+  color:var(--gold-hi);border:1px solid var(--line);border-radius:2px;background:rgba(201,162,94,.06)}
+.pref strong{display:block;font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.06em}
+.pref small{display:block;color:var(--paper-dim);font-size:11.5px;margin-top:1px}
+.nav{display:flex;gap:12px;margin-top:14px}
+.btn-ghost{flex:1;background:none;border:1px solid var(--line);color:var(--paper-dim);font-size:14px;padding:12px;border-radius:2px}
+.btn-go{flex:2;background:linear-gradient(135deg,#a63a2b,#7d2b20);color:#f3e2c8;font-size:14px;padding:12px;border-radius:2px}
+.btn-go:disabled{opacity:.35;cursor:not-allowed}
+
+/* ===== 答题 ===== */
+#question{padding-bottom:36px}
+#quizChrome{position:sticky;top:0;z-index:5;background:linear-gradient(var(--ink) 78%,transparent);padding:16px 0 14px;margin:0 -22px;padding-left:22px;padding-right:22px}
+.pmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--paper-dim);letter-spacing:.2em;margin-bottom:10px}
+.pmeta b{color:var(--gold);font-family:var(--serif)}
+.track{height:2px;background:rgba(201,162,94,.15);border-radius:1px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width .5s ease}
+.scene{margin-top:18px;display:inline-block;font-size:12px;color:var(--gold);border:1px solid var(--line);padding:4px 12px;letter-spacing:.25em;border-radius:2px}
+.q-text{font-family:var(--serif);font-size:22px;font-weight:900;letter-spacing:.04em;margin:16px 0 24px;line-height:1.55}
+.answers{display:grid;gap:11px}
+.ans{display:flex;gap:14px;align-items:center;text-align:left;padding:16px 16px;cursor:pointer;
+  background:rgba(233,223,199,.03);border:1px solid var(--line);border-radius:3px;color:var(--paper);
+  font-family:var(--sans);font-size:15px;transition:border-color .2s,background .2s,transform .15s;width:100%}
+.ans:active{transform:scale(.985)}
+.ans .abc{flex:none;width:30px;height:30px;display:grid;place-items:center;font-family:var(--serif);font-weight:900;
+  color:var(--gold);border:1px solid var(--line);border-radius:2px;font-size:14px}
+.ans.sel{border-color:var(--gold);background:rgba(201,162,94,.12)}
+.ans.sel .abc{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.auto-hint{margin-top:20px;font-size:12px;color:var(--paper-dim);letter-spacing:.15em;opacity:0;transition:opacity .3s}
+.auto-hint.on{opacity:1}
+.qnav{display:flex;gap:12px;margin-top:22px}
+.qnav .btn-ghost{flex:1}
+.qnav .btn-go{flex:1}
+
+/* ===== 结果 ===== */
+#result{padding:46px 0 60px}
+.seal{width:74px;height:74px;margin:0 auto;display:grid;place-items:center;transform:rotate(-7deg);
+  background:linear-gradient(135deg,#a63a2b,#7d2b20);border-radius:6px;box-shadow:0 6px 24px rgba(166,58,43,.45);animation:sealIn .8s ease both}
+.seal b{font-family:var(--serif);font-size:34px;color:#f3e2c8;font-weight:900}
+.r-eyebrow{text-align:center;margin-top:22px;color:var(--gold);font-size:12px;letter-spacing:.5em;text-indent:.5em}
+.r-name{text-align:center;font-family:var(--serif);font-size:clamp(40px,11vw,58px);font-weight:900;letter-spacing:.1em;margin-top:8px;animation:inkIn 1.2s ease both .3s}
+.r-title{text-align:center;color:var(--paper-dim);font-size:14px;letter-spacing:.25em;margin-top:4px}
+.r-quote{text-align:center;font-family:var(--serif);color:var(--gold-hi);font-size:16px;margin-top:18px;letter-spacing:.1em}
+.rate-wrap{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-top:26px}
+.rate{font-family:var(--serif);font-size:76px;font-weight:900;color:var(--gold-hi);line-height:1;text-shadow:0 0 30px rgba(232,201,138,.3)}
+.rate-cap{font-size:12px;color:var(--paper-dim);letter-spacing:.3em}
+.dominant{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.dominant span{font-size:13px;color:var(--seal);border:1px solid rgba(166,58,43,.5);background:rgba(166,58,43,.12);padding:6px 18px;border-radius:2px;letter-spacing:.2em}
+.dominant .chip{font-family:var(--serif);color:var(--gold-hi);border:1px solid rgba(201,162,94,.55);background:rgba(201,162,94,.1);padding:6px 14px;border-radius:2px;letter-spacing:.12em;font-weight:700}
+.code-note{text-align:center;font-size:10.5px;color:var(--paper-dim);letter-spacing:.1em;margin-top:7px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}
+.stat{border:1px solid var(--line);background:rgba(201,162,94,.05);border-radius:3px;padding:11px 4px 9px;text-align:center}
+.stat b{display:block;font-family:var(--serif);font-size:19px;color:var(--gold-hi);letter-spacing:.02em}
+.stat span{display:block;font-size:10.5px;color:var(--paper-dim);letter-spacing:.14em;margin-top:3px}
+.ranks{display:grid;gap:9px}
+.rank{display:grid;grid-template-columns:30px 1fr 50px;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:3px;background:rgba(233,223,199,.03)}
+.rank.first{border-color:var(--gold);background:rgba(201,162,94,.09)}
+.rank .rk{font-family:var(--serif);color:var(--gold);font-size:14px;text-align:center}
+.rank .nm b{display:block;font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em}
+.rank .nm small{display:block;color:var(--paper-dim);font-size:11px;margin-top:1px}
+.rank .nm i{display:block;height:3px;background:rgba(233,223,199,.08);border-radius:2px;margin-top:6px;overflow:hidden;font-style:normal}
+.rank .nm i u{display:block;height:100%;background:linear-gradient(90deg,#8a6b33,var(--gold-hi));text-decoration:none;transition:width 1s ease;width:0}
+.rank .pct{font-family:var(--serif);font-weight:900;color:var(--gold-hi);font-size:16px;text-align:right}
+.blk{margin-top:44px}
+.blk-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
+.blk-head .no{font-family:var(--serif);font-size:13px;color:var(--gold);letter-spacing:.2em}
+.blk-head h3{font-family:var(--serif);font-size:19px;font-weight:900;letter-spacing:.12em}
+.blk-head::after{content:"";flex:1;height:1px;background:var(--line);align-self:center}
+.portrait-txt{font-size:15px;color:#d8cba8;text-align:justify}
+.radar-box{display:grid;place-items:center}
+.radar-box svg{max-width:100%;height:auto}
+.bars{display:grid;gap:12px}
+.bar-row{display:grid;grid-template-columns:92px 1fr 38px;align-items:center;gap:12px}
+.bar-row span{font-family:var(--serif);font-size:14px;color:var(--paper-dim);letter-spacing:.15em}
+.bar-row b{font-family:var(--serif);color:var(--gold-hi);font-size:15px;text-align:right}
+.bar-track{height:6px;background:rgba(233,223,199,.07);border-radius:3px;overflow:hidden}
+.bar-track i{display:block;height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#8a6b33,var(--gold-hi));transition:width 1s ease}
+.reso{display:grid;gap:10px}
+.note{background:rgba(233,223,199,.04);border:1px solid var(--line);border-left:2px solid var(--gold);padding:14px 16px;border-radius:2px}
+.note b{display:block;font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:.15em;margin-bottom:4px}
+.note p{font-size:13.5px;color:#c4b58f}
+.reading p{font-size:14.5px;line-height:2;color:#d8cba8;text-align:justify}
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.lines{display:grid;gap:10px}
+.line-card{font-family:var(--serif);font-size:16px;color:var(--paper);letter-spacing:.05em;padding:16px 18px;
+  border:1px dashed rgba(201,162,94,.4);border-radius:2px;background:rgba(201,162,94,.04)}
+.unlock{margin-top:48px;border:1px solid rgba(201,162,94,.4);border-radius:4px;padding:24px 20px;
+  background:linear-gradient(160deg,rgba(201,162,94,.08),rgba(166,58,43,.06))}
+.unlock h4{font-family:var(--serif);font-size:18px;letter-spacing:.15em;color:var(--gold-hi)}
+.unlock p{font-size:13px;color:var(--paper-dim);margin:8px 0 16px}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px}
+.btn-seal{background:linear-gradient(135deg,#a63a2b,#7d2b20);color:#f3e2c8;font-size:15px;padding:15px;border-radius:2px}
+.r-foot{text-align:center;margin-top:40px;font-size:11px;color:#5e543f;letter-spacing:.35em}
+/* 保存面板 */
+.mask{position:fixed;inset:0;z-index:20;background:rgba(6,5,3,.8);backdrop-filter:blur(4px);display:none;place-items:center;padding:20px}
+.mask.on{display:grid}
+.save-panel{background:#171310;border:1px solid var(--line);border-radius:6px;max-width:92vw;max-height:88svh;overflow:auto;padding:16px}
+.save-panel img{display:block;max-width:100%;border-radius:4px}
+.save-tip{text-align:center;font-size:12px;color:var(--paper-dim);margin-top:10px;letter-spacing:.1em}
+.save-close{position:sticky;top:0;float:right;width:30px;height:30px;background:none;border:1px solid var(--line);color:var(--paper-dim);border-radius:2px;cursor:pointer;font-size:16px}
+@media (min-width:560px){.q-text{font-size:24px}}
+/* ===== 入镜门 ===== */
+body.gate-on{overflow:hidden;height:100%}
+.gate{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:var(--ink);padding:24px;transition:opacity .5s ease,visibility .5s ease}
+.gate::before{content:"";position:absolute;inset:12px;border:1px solid var(--line);pointer-events:none}
+.gate::after{content:"";position:absolute;inset:18px;border:1px dashed rgba(201,162,94,.22);pointer-events:none}
+.gate.off{opacity:0;visibility:hidden}
+.gate-box{position:relative;width:min(340px,100%);text-align:center;padding:36px 26px 28px;border:1px solid rgba(201,162,94,.45);background:rgba(21,18,9,.72);box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.gate-box::before{content:"";position:absolute;top:-6px;left:-6px;width:24px;height:24px;border-top:2px solid var(--gold);border-left:2px solid var(--gold)}
+.gate-box::after{content:"";position:absolute;bottom:-6px;right:-6px;width:24px;height:24px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold)}
+.gate-seal{width:54px;height:54px;margin:0 auto 16px;display:grid;place-items:center;transform:rotate(-7deg);background:linear-gradient(135deg,#a63a2b,#7d2b20);border-radius:5px;box-shadow:0 6px 20px rgba(166,58,43,.4)}
+.gate-seal b{font-family:var(--serif);font-size:26px;color:#f3e2c8;font-weight:900}
+.gate-eyebrow{font-family:var(--serif);color:var(--gold);font-size:12px;letter-spacing:.5em;text-indent:.5em}
+.gate-title{font-family:var(--serif);font-size:32px;font-weight:900;letter-spacing:.2em;text-indent:.2em;margin-top:8px;color:var(--paper)}
+.gate-sub{color:var(--paper-dim);font-size:12.5px;letter-spacing:.18em;margin-top:8px}
+.gate-input{display:block;width:100%;margin:22px 0 0;background:rgba(233,223,199,.05);border:1px solid var(--line);border-radius:2px;color:var(--gold-hi);font-family:var(--serif);font-size:26px;font-weight:900;letter-spacing:.55em;text-indent:.55em;text-align:center;padding:13px 0;outline:none;caret-color:var(--gold);transition:border-color .25s,box-shadow .25s}
+.gate-input:focus{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,162,94,.35)}
+.gate-btn{margin-top:16px;width:100%;background:linear-gradient(135deg,#a63a2b,#7d2b20);color:#f3e2c8;font-size:15px;padding:13px;border-radius:2px;box-shadow:0 8px 24px rgba(166,58,43,.3),inset 0 0 0 1px rgba(232,201,138,.3)}
+.gate-err{margin-top:12px;font-size:12px;color:#e08a76;letter-spacing:.15em;opacity:0;transition:opacity .3s}
+.gate-err.on{opacity:1}
+.gate.shake .gate-box{animation:shake .45s ease}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+</style>
+</head>
+<body class="gate-on">
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-seal"><b>镜</b></div>
+    <div class="gate-eyebrow">观我 · 铜镜封印</div>
+    <div class="gate-title">入镜密令</div>
+    <div class="gate-sub">输入六位密令，方可开镜</div>
+    <input class="gate-input" id="gateInput" type="text" inputmode="numeric" maxlength="6" autocomplete="off">
+    <button class="btn gate-btn" id="gateBtn">开 镜</button>
+    <div class="gate-err" id="gateErr">密令不对，再试一次</div>
+  </div>
+</div>
+<main>
+
+  <!-- 开场 -->
+  <section class="screen on" id="intro">
+    <div class="vtitle">观<em>我</em></div>
+    <div class="intro-sub">三千年来 · 你是谁的回声</div>
+    <div class="intro-rule"></div>
+    <div class="intro-tags"><span>廿四情境</span><span>八维人格</span><span>百位人物</span><span>一纸镜鉴</span></div>
+    <button class="btn btn-main" id="startBtn">入 镜</button>
+    <div class="intro-foot">趣味性格测试 · 约 4 分钟</div>
+  </section>
+
+  <!-- 偏好 -->
+  <section class="screen" id="preference">
+    <div class="chapter">第一章 · 择镜</div>
+    <h2 class="sec">你想照见哪一侧的自己？</h2>
+    <p class="sec-sub">镜面会优先在同方向的人物档案中为你寻骨。</p>
+    <div class="pref-grid" id="prefGrid">
+      <button class="pref" data-gender="female"><span class="mark">姝</span><span><strong>以女性人物为镜</strong><small>从青史留名的女子中，寻与你同骨之人</small></span></button>
+      <button class="pref" data-gender="male"><span class="mark">朔</span><span><strong>以男性人物为镜</strong><small>从帝王将相与文士中，寻与你同骨之人</small></span></button>
+      <button class="pref" data-gender="all"><span class="mark">双</span><span><strong>不限方向</strong><small>翻开全卷，纯粹以性情论骨</small></span></button>
+    </div>
+    <div class="nav">
+      <button class="btn btn-ghost" id="prefBack">退 出</button>
+      <button class="btn btn-go" id="prefNext" disabled>开 卷</button>
+    </div>
+  </section>
+
+  <!-- 答题 -->
+  <section class="screen" id="question">
+    <div id="quizChrome">
+      <div class="pmeta"><b id="topCount">第一问</b><span id="progressText">1 / 24</span></div>
+      <div class="track"><i id="trackFill"></i></div>
+    </div>
+    <span class="scene" id="sceneTag"></span>
+    <h2 class="q-text" id="questionText"></h2>
+    <div class="answers" id="answerList"></div>
+    <div class="auto-hint" id="autoHint">已作答，正在翻页…</div>
+    <div class="qnav">
+      <button class="btn btn-ghost" id="prevBtn">上一问</button>
+      <button class="btn btn-go" id="nextBtn" disabled>下一问</button>
+    </div>
+  </section>
+
+  <!-- 结果 -->
+  <section class="screen" id="result">
+    <div class="seal"><b id="sealChar">观</b></div>
+    <div class="r-eyebrow">镜 鉴 已 成</div>
+    <h1 class="r-name" id="resultName">——</h1>
+    <div class="r-title" id="resultTitle"></div>
+    <div class="r-quote" id="resultQuote"></div>
+    <div class="rate-wrap"><span class="rate" id="matchRate">0%</span><span class="rate-cap">骨相契合</span></div>
+    <div class="dominant"><span id="dominant"></span><span class="chip" id="pcode"></span></div>
+    <div class="code-note">镜骨八维 OCT 编码 · 前段为你的两大主导维度缩写，末段为骨相契合度</div>
+    <div class="stats" id="statRow"></div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">壹</span><h3>你的人格光谱</h3></div>
+      <div class="radar-box" id="radarBox"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">贰</span><h3>八维细读</h3></div>
+      <div class="bars" id="dimensionGrid"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">叁</span><h3>你与 TA 的三重共振</h3></div>
+      <div class="reso" id="commonGround"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">肆</span><h3>同骨榜 · 百卷寻亲</h3></div>
+      <div class="ranks" id="kinList"></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">伍</span><h3>镜语 · 专属解读</h3></div>
+      <div class="note reading"><p id="reading"></p></div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">陆</span><h3>镜中暗面</h3></div>
+      <div class="risk-grid">
+        <div class="note"><b>可能的盲点</b><p id="blindspot"></p></div>
+        <div class="note"><b>风险提醒</b><p id="risk"></p></div>
+        <div class="note"><b>给你的建议</b><p id="advice"></p></div>
+      </div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-head"><span class="no">柒</span><h3>TA 会说的三句话</h3></div>
+      <div class="lines" id="lines"></div>
+    </div>
+
+    <div class="unlock" id="unlockBox" hidden>
+      <h4>完整版 · 镜鉴长卷</h4>
+      <p>含 6 页深度解读：人格成因回溯、职场与亲密关系策略、与八位对手人物的对照推演。</p>
+      <button class="btn btn-seal" id="unlockBtn" style="width:100%">获取完整报告</button>
+    </div>
+
+    <div class="share-actions">
+      <button class="btn btn-seal" id="exportBtn">生成镜鉴长图</button>
+      <button class="btn btn-ghost" id="restartBtn">再照一次</button>
+    </div>
+    <div class="r-foot">观我 · 历史人格镜鉴 · 结果仅供娱乐自省</div>
+  </section>
+</main>
+
+<div class="mask" id="saveMask">
+  <div class="save-panel">
+    <button class="save-close" id="saveClose">×</button>
+    <img id="saveImg" alt="长按保存">
+    <div class="save-tip">长按图片 · 保存到手机相册</div>
+  </div>
+</div>
+
+<script>
+/* ========== 入镜门 ========== */
+const GATE_CODE="946071";
+const gateEl=document.getElementById("gate"),gateInput=document.getElementById("gateInput"),gateErr=document.getElementById("gateErr");
+gateInput.addEventListener("input",()=>{gateInput.value=gateInput.value.replace(/\D/g,"").slice(0,6);gateErr.classList.remove("on")});
+function gateTry(){
+  if(gateInput.value.trim()===GATE_CODE){
+    document.body.classList.remove("gate-on");
+    gateEl.classList.add("off");
+  }else{
+    gateEl.classList.remove("shake");void gateEl.offsetWidth;gateEl.classList.add("shake");
+    gateErr.classList.add("on");
+    gateInput.focus();gateInput.select();
+  }
+}
+document.getElementById("gateBtn").onclick=gateTry;
+gateInput.addEventListener("keydown",e=>{if(e.key==="Enter")gateTry()});
+
+/* ========== 配置 ========== */
+const SHOP_URL = ""; // ← 填入你的小红书店铺商品链接，留空则不显示完整报告入口
+
+/* ========== 数据 ========== */
+const DIMS=["决断","共情","开创","洞察","表达","经营","独立","担当"];
+/* 八维英文缩写 */
+const AB={决断:"DEC",共情:"EMP",开创:"PIO",洞察:"INS",表达:"EXP",经营:"OPS",独立:"AUT",担当:"OWN"};
+/* 镜语模板：每维 hi（嵌入真实分数的具体化赞美）/ lo（情绪确认+成长型反馈） */
+const DTEXT={
+ 决断:{hi:s=>`你的决断 ${s} 分——别人还在反复权衡时，你心里已经排好了方案顺序，并清楚先砍掉哪一个，这种「先拍板再迭代」的爽利，是很多场合最稀缺的那一刀。`,lo:`决断暂时不是你的主打——拍板前的犹豫，其实是你在替每个被影响的人多想一步，这不是优柔；先从小事练「24 小时内决定」，大场面你一样能稳稳出手。`},
+ 共情:{hi:s=>`你的共情 ${s} 分——聚会里谁的话少了半句、谁在强撑笑容，你总能第一时间接住，这种把人放在局面正中央的敏感，让你成为很多人默认的倾诉对象。`,lo:`共情这一维暂时靠后——你不是冷，只是习惯先处理事情、再处理心情；下次回应前先接一句「我明白你的难处」，很多门会自己打开。`},
+ 开创:{hi:s=>`你的开创 ${s} 分——面对没人做过的事，你的第一反应不是「难」，而是「第一步从哪落地」，别人眼里的风险，在你这里是还没画完的地图。`,lo:`开创暂时不是你的主打——你更愿意把已有的路走扎实，这本身是稀缺的定力；偶尔允许自己做一个「没把握但想试」的小实验，新的可能自己会来找你。`},
+ 洞察:{hi:s=>`你的洞察 ${s} 分——别人看热闹的地方，你看见的是结构与因果：谁在带节奏、真正的卡点在哪，你往往一眼便知，这份清醒是你最值钱的底层资产。`,lo:`洞察这一维暂时靠后——你更容易先相信眼前看见的，这也让你活得轻快；遇大事多问一句「为什么偏偏是现在」，你会捡到别人错过的线索。`},
+ 表达:{hi:s=>`你的表达 ${s} 分——再复杂的想法，你也能用一个比方讲进人心里，冷场的会议室里你一开口气氛就活了，语言在你手里是工具也是礼物。`,lo:`表达暂时不是你的主打——你心里的东西常常比说出来的多，这不是缺陷；先从三五个人的小场子练开口，你的分量会开始被真正看见。`},
+ 经营:{hi:s=>`你的经营 ${s} 分——谁手里有什么、缺口怎么补、这件事能不能长期跑，你心里有一本清账，跟你合作的人总能在混乱里摸到章法。`,lo:`经营这一维暂时靠后——你不习惯把利益摆上桌面，反而显得干净；试着给自己的时间与精力标个价，好的付出才不会被随手消耗。`},
+ 独立:{hi:s=>`你的独立 ${s} 分——你的判断有一套自己的坐标系，热门结论也摇不动它，一个人也能把日子与事情安排妥帖，这种自洽是你最稳的底座。`,lo:`独立这一维暂时靠后——你倾向留在熟悉的协作与陪伴里，这本身是一种安全感；每周留两小时彻底的独处，听听不被热闹盖住的那个声音。`},
+ 担当:{hi:s=>`你的担当 ${s} 分——事情砸了你不先找理由，而是先补窟窿；答应的事哪怕代价翻倍也会兑现，这让身边的人敢把后背交给你。`,lo:`担当这一维暂时靠后——不是你躲事，你只是更相信专业分工；从兜住一件没人愿接的小事开始，你会慢慢尝到被信任的甜。`}
+};
+/* 情绪价值总结句（与 top1 维度挂钩） */
+const EMO={决断:"你不是天生强势，你只是把「替所有人拍板」的重担，先留给了自己。",共情:"你不是不会拒绝，你只是把「再多体谅一下」的选择权，留给了自己。",开创:"你不是坐不住，你只是把「去没人的地方蹚一条路」的选择权，留给了自己。",洞察:"你不是想得多，你只是把「再看清一点再出发」的谨慎，留给了自己。",表达:"你不是爱表现，你只是把「替沉默的人把话说出口」的选择权，留给了自己。",经营:"你不是精于算计，你只是把「不让价值被浪费」的账，留给了自己。",独立:"你不是不合群，你只是把「按自己的节奏活」的选择权，留给了自己。",担当:"你不是不会累，你只是把「再扛一段」的选择权，留给了自己。"};
+/* 可执行小建议（与 top1 维度挂钩，呼应原型建议语气） */
+const TIP={决断:"本周挑一件拖了很久的小事，在 24 小时内直接拍板，练一次「先决定、后优化」。",共情:"今晚找一位在乎的人，只听十分钟不打断，结束时替 TA 把感受说出来。",开创:"给搁置最久的那个新想法 48 小时试验期，用最小成本先跑出一步。",洞察:"下次开会只带一个问题去：「这件事真正的约束是什么」，记下答案。",表达:"把你最近的一个观点写成三句话发出去，练一次公开表达。",经营:"花二十分钟列一张「我的资源清单」：能调用的人、技能与时间。",独立:"本周划出两小时完全属于你的独处时段，不安排任何协作与社交。",担当:"认领一件团队里没人愿接的小事，把它做到底，积累「靠谱」的口碑。"};
+
+const ARCH={
+  helm:{label:"掌局者",tags:["格局","决断","秩序"],vec:[95,55,72,70,64,82,56,90],
+    portrait:"面对混乱的局面，你的第一反应不是退开，而是立起秩序。你习惯先看清全局的骨架，再决定每一步落在何处，并愿意为最终结果签名负责。",
+    blind:"效率常被你放在感受之前，身边人可能因此误读你的用心。",
+    reality:"无论身处什么团队，你往往就是那个拍板、兜底、把散沙拢成塔的人。",
+    advice:"保留你的决断，但给不同的声音留一条抵达你耳边的路。"},
+  weave:{label:"布局者",tags:["洞察","谋略","克制"],vec:[75,50,68,97,56,74,76,66],
+    portrait:"你不容易被表面的热闹带走。碎片信息在你眼里会自己排成规律，你把眼前的得失放进更长的时间轴里，再选那一步杠杆最大落子。",
+    blind:"想得太深时，可能错过必须快速出手的窗口。",
+    reality:"你常是局中的观察者与设计者，永远比旁人多备一个第二方案。",
+    advice:"谋略要落地才算数；信息足够的那一刻，允许自己果断下注。"},
+  breach:{label:"破壁者",tags:["冒险","行动","拓新"],vec:[83,52,98,60,62,56,85,76],
+    portrait:"未知对你是引力而非威胁。比起沿着成熟路线重复，你宁可承担试错的成本，亲手把不存在的路走成一张可抵达的地图。",
+    blind:"新目标总在闪光，你可能低估了长期维护与收尾的价值。",
+    reality:"面对新事物，你常常是第一个说『可以试试』的人。",
+    advice:"每次开路之前，为持续投入和退出条件各留一条线。"},
+  mesh:{label:"织网者",tags:["共情","协调","连接"],vec:[58,97,64,76,84,72,48,68],
+    portrait:"你听得见言语背后的需求，也懂得在立场之间搭起那座双方都愿意走的桥。你相信，连接本身就是一种力量。",
+    blind:"太照顾关系时，自己的边界常被排到最后一位。",
+    reality:"你是天然的缓冲带，擅长翻译分歧，让不同的人愿意坐在同一张桌前。",
+    advice:"好的和解从不靠自我牺牲；清晰说出你的条件，也是一种温柔。"},
+  probe:{label:"格物者",tags:["求知","理性","深潜"],vec:[55,62,70,96,68,58,88,60],
+    portrait:"证据、逻辑与长期积累，是你世界的三根支柱。比起立刻被看见，你更愿意把一件事钻研到底，让结论经得起反复推敲。",
+    blind:"标准过高时，你可能推迟表达，也显得不够热络。",
+    reality:"复杂问题面前，你是那个潜得最深的人，擅长把乱麻整理成框架。",
+    advice:"不必等到百分之百确定；阶段性公开，会让知识继续生长。"},
+  torch:{label:"燃灯者",tags:["审美","感受","创造"],vec:[48,86,84,78,98,46,92,54],
+    portrait:"你对情绪、语言与美有着近乎天线的触觉。那些难以言明的经验，经你之手变成作品、叙事与气氛，让别人从中看见自己。",
+    blind:"感受过载时，现实责任容易被你视作对自由的压迫。",
+    reality:"你靠表达来整理世界，也常用独特的审美为平凡生活重新命名。",
+    advice:"给灵感一个稳定的容器；规律与自由，并不互相排斥。"},
+  ward:{label:"守约者",tags:["担当","忠诚","坚韧"],vec:[78,84,54,66,52,74,58,98],
+    portrait:"承诺在你这里是有重量的东西。越是艰难的局面，你越倾向站稳、照看整体，用可靠的行动护住你认定的人与价值。",
+    blind:"习惯了坚强，你就忘了求助，也会把不属于自己的重量背上肩。",
+    reality:"别人遇到真正的难关时，第一个想到的往往是你。",
+    advice:"担当不是无限透支；也留给值得信任的人一次支持你的机会。"},
+  stake:{label:"经营家",tags:["务实","资源","长线"],vec:[72,66,76,76,72,98,62,72],
+    portrait:"你善于让资源流动起来：既看见价值本身，也看见价值抵达的路径。信用、效率与可持续，比一时漂亮的数字更重要。",
+    blind:"太在意投入产出时，可能忽略那些无法量化的情感价值。",
+    reality:"你擅长把想法变成项目，把零散的人与物组织成能运转的系统。",
+    advice:"大账继续算清，同时给少数重要的人与事保留一段『不计回报』。"},
+  drift:{label:"游侠者",tags:["自由","清醒","边界"],vec:[52,72,64,84,78,44,98,56],
+    portrait:"你重视精神的自由与个人的节奏，不肯为不值得的评价耗损自己。你清楚什么属于自己，也敢于离开失真的秩序。",
+    blind:"抽身太早，可能让机会、影响力与深层连接一起变小。",
+    reality:"你有自己的价值坐标，不容易被集体情绪裹挟着走。",
+    advice:"守住边界很好，但别把所有复杂协作都读成对自由的冒犯。"},
+  forge:{label:"铸法者",tags:["改革","勇气","原则"],vec:[88,64,94,80,80,66,90,86],
+    portrait:"对『不合理但人人已习惯』的事，你格外敏感。只要确认方向正确，你愿意承受质疑，推动规则与系统发生真正的改变。",
+    blind:"推进太快时，容易低估旧惯性的力量与他人的安全感。",
+    reality:"你不会用『向来如此』解释问题，会主动去找更好的做法。",
+    advice:"改变需要锋芒，也需要节奏、同盟与一条可复制的路径。"}
+};
+
+const F=(name,gender,era,role,arch,quote)=>({name,gender,era,role,arch,quote});
+const PEOPLE=[
+  F("秦始皇","male","秦","一统之局","helm","天下之势，合久必分，分久必合——而我选择让『合』先发生。"),
+  F("李世民","male","唐","贞观之主","helm","以人为镜，可以明得失。"),
+  F("朱元璋","male","明","布衣开国之君","helm","天予不取，反受其咎。"),
+  F("汉武帝","male","西汉","拓疆之主","helm","寇可往，我亦可往。"),
+  F("曹操","male","东汉末","治世能臣 乱世枭雄","helm","设使天下无有孤，不知当几人称王。"),
+  F("成吉思汗","male","蒙元","草原征服者","helm","要让青史之下，皆为我马蹄踏过之地。"),
+  F("诸葛亮","male","三国","鞠躬尽瘁之相","weave","非淡泊无以明志，非宁静无以致远。"),
+  F("张良","male","西汉","运筹帷幄之谋","weave","运筹帷幄之中，决胜千里之外。"),
+  F("司马懿","male","三国","熬到最后的人","weave","善败者不亡，能忍者终胜。"),
+  F("孙武","male","春秋","兵圣","weave","知彼知己，百战不殆。"),
+  F("刘伯温","male","明","前知五百年","weave","天下之势，如弈棋然。"),
+  F("韩信","male","西汉","国士无双","weave","善战者，致人而不致于人。"),
+  F("张居正","male","明","改革首辅","weave","愿以深心奉尘刹，不予自身求利益。"),
+  F("霍去病","male","西汉","封狼居胥","breach","匈奴未灭，何以家为。"),
+  F("项羽","male","秦末","霸王","breach","力拔山兮气盖世。"),
+  F("郑和","male","明","七下西洋","breach","欲国家富强，不可置海洋于不顾。"),
+  F("张骞","male","西汉","凿空西域","breach","路是人走出来的，我叫它为丝绸之路。"),
+  F("鲁班","male","春秋","百工之祖","breach","规矩权衡，出于我心。"),
+  F("毕昇","male","北宋","活字之父","breach","一字一动，天下文章自此流转。"),
+  F("徐霞客","male","明","万里遐征","breach","大丈夫当朝碧海而暮苍梧。"),
+  F("晏婴","male","春秋","不辱使命之相","mesh","橘生淮南则为橘，生于淮北则为枳。"),
+  F("蔺相如","male","战国","完璧归赵","mesh","先国家之急而后私仇也。"),
+  F("王昭君","female","西汉","出塞和平使","mesh","一去紫台连朔漠，愿以此身换烽烟。"),
+  F("文成公主","female","唐","入藏使者","mesh","我带来的是经卷与种子，留下的是一百年安宁。"),
+  F("长孙皇后","female","唐","千古贤后","mesh","以柔进谏，其效胜刚。"),
+  F("孔子","male","春秋","万世师表","probe","学而不思则罔，思而不学则殆。"),
+  F("司马迁","male","西汉","究天人之际","probe","人固有一死，或重于泰山，或轻于鸿毛。"),
+  F("张衡","male","东汉","观天测地","probe","人生在勤，不索何获。"),
+  F("祖冲之","male","南北朝","圆周率之准","probe","亲量圭尺，躬察仪漏。"),
+  F("李时珍","male","明","本草纲目","probe","窥天地之奥而达造化之权。"),
+  F("沈括","male","北宋","博物通才","probe","天地之变，寒暑风雨，皆当究其所以。"),
+  F("王阳明","male","明","知行合一","probe","知是行之始，行是知之成。"),
+  F("玄奘","male","唐","西行求法","probe","宁可就西而死，岂归东而生。"),
+  F("李白","male","唐","诗仙","torch","天生我材必有用，千金散尽还复来。"),
+  F("苏轼","male","北宋","旷达之宗","torch","竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。"),
+  F("李清照","female","宋","千古第一才女","torch","生当作人杰，死亦为鬼雄。"),
+  F("蔡文姬","female","汉末","胡笳十八拍","torch","感今伤昔，闻之者莫不掩涕。"),
+  F("上官婉儿","female","唐","称量天下才","torch","势如连璧友，心似臭兰人。"),
+  F("鱼玄机","female","唐","易求无价宝","torch","易求无价宝，难得有心郎。"),
+  F("谢道韫","female","东晋","咏絮之才","torch","未若柳絮因风起。"),
+  F("关羽","male","三国","义绝","ward","玉可碎而不可改其白，竹可焚而不可毁其节。"),
+  F("岳飞","male","南宋","精忠报国","ward","文臣不爱钱，武臣不惜死，天下太平矣。"),
+  F("花木兰","female","南北朝","替父从军","ward","万里赴戎机，关山度若飞。"),
+  F("梁红玉","female","南宋","击鼓退金","ward","鼓声不歇，战意不灭。"),
+  F("包拯","male","北宋","铁面无私","ward","清心为治本，直道是身谋。"),
+  F("杜甫","male","唐","诗圣","ward","安得广厦千万间，大庇天下寒士俱欢颜。"),
+  F("范仲淹","male","北宋","先忧后乐","ward","先天下之忧而忧，后天下之乐而乐。"),
+  F("管仲","male","春秋","九合诸侯","stake","仓廪实而知礼节，衣食足而知荣辱。"),
+  F("范蠡","male","春秋","三聚三散","stake","贵上极则反贱，贱下极则反贵。"),
+  F("沈万三","male","元末","天下首富","stake","财如流水，导之有道。"),
+  F("黄道婆","female","元","衣被天下","stake","一梭一线，皆是生计与生机。"),
+  F("吕不韦","male","战国","奇货可居","stake","耕田之利几倍？曰十倍。立国之利几倍？曰无数。"),
+  F("陶渊明","male","东晋","归去来兮","drift","采菊东篱下，悠然见南山。"),
+  F("庄周","male","战国","逍遥之祖","drift","泉涸，鱼相与处于陆，不如相忘于江湖。"),
+  F("嵇康","male","魏晋","广陵散绝","drift","非汤武而薄周孔，越名教而任自然。"),
+  F("卓文君","female","西汉","当垆卖酒","drift","愿得一心人，白头不相离。"),
+  F("孙尚香","female","三国","枭姬","drift","纵在局中，我仍是执子之人。"),
+  F("商鞅","male","战国","徙木立信","forge","治世不一道，便国不法古。"),
+  F("王安石","male","北宋","天变不足畏","forge","天变不足畏，祖宗不足法，人言不足恤。"),
+  F("墨子","male","战国","兼爱非攻","forge","利于人谓之巧，不利于人谓之拙。"),
+  F("冯太后","female","北魏","太和改制","forge","欲行新法，先破旧规。"),
+  F("武则天","female","唐","无字碑主","forge","身居高位者，当以天下为局。"),
+  F("穆桂英","female","宋传说","挂帅出征","forge","我不挂帅谁挂帅，我不领兵谁领兵。")
+];
+
+/* 16 题 · 每题 4 选项，各映射一个维度 */
+const QUESTIONS=[
+  ["局中","一场聚会里话题散乱、气氛微妙，你通常会？",[["抛个新话题，把场子带起来","表达"],["先看清谁在局中、谁在局外","洞察"],["待在自己舒服的位置，顺势而为","独立"],["留意那个被冷落的人","共情"]]],
+  ["抉择","项目方向悬而未决，时间不等人，你会？",[["拿出方案，推动大家尽快拍板","决断"],["把风险与收益摊开，再看一遍","洞察"],["先私下打通关键人物的顾虑","经营"],["提议先做个小范围试验","开创"]]],
+  ["调停","两位好友因误会闹僵，都来找你倾诉？",[["各自倾听，但不急着站队","共情"],["直接约两人当面把话说开","决断"],["设计一个让双方都体面的台阶","开创"],["先让时间冷静，事实自会浮现","独立"]]],
+  ["入新","闯入一个完全陌生的领域，你的第一步？",[["从底层原理系统学起","洞察"],["直接上手，边做边学","开创"],["找到这个领域最强的人请教","经营"],["制定一份不打折的学习计划","担当"]]],
+  ["非议","你被人公开误解时，第一反应是？",[["当场把话说清楚","表达"],["不解释，让结果替你说话","独立"],["分析对方为什么会这样理解","洞察"],["先照顾情绪，再处理事实","共情"]]],
+  ["入群","进入一个新团队，你自然扮演的角色？",[["定目标、定节奏的人","决断"],["协调各方情绪的人","共情"],["提出别人没想到方案的人","开创"],["默默把琐碎事务兜住的人","担当"]]],
+  ["取舍","一笔闲钱加一段闲暇，你会？",[["投资自己的技能与眼光","经营"],["换一段彻底没人打扰的独处","独立"],["办一场聚会，加深重要的人际","表达"],["存下来，为不确定的未来兜底","担当"]]],
+  ["争端","会议上有人当众质疑你的方案？",[["用数据和逻辑当场回应","洞察"],["欢迎挑战，把它变成讨论的燃料","表达"],["先按住情绪，会后单独沟通","共情"],["坚持立场：方向我来定","决断"]]],
+  ["长夜","一个目标三年没见到结果，你会？",[["复盘路径，调整方法再出发","洞察"],["怀疑方向本身，考虑换一条路","开创"],["想想支持你的人，咬牙继续","担当"],["承认它，转身去做更值得的事","独立"]]],
+  ["授予","领导把一件没人愿接的烂摊子给你？",[["接住，先干起来再说","担当"],["谈条件：要人要资源","经营"],["拆解问题，找最省力的切口","洞察"],["提议一个大家没试过的做法","开创"]]],
+  ["深谈","深夜朋友向你吐露脆弱的一面？",[["安静听完，不打断不评判","共情"],["帮他分析处境，给出具体建议","洞察"],["用自己的故事让他不孤单","表达"],["记在心里，日后持续留意","担当"]]],
+  ["岔路","两个机会都好：一个稳、一个险？",[["选险的那个，成本算得清","开创"],["选稳的那个，把风险留给别人","决断"],["先各试一小步再全押","经营"],["问自己：哪个更像我要的人生","独立"]]],
+  ["失序","团队规则不合理，但人人都习惯了？",[["推动改规则，哪怕得罪人","决断"],["先在规则内做出成绩再说","经营"],["把不合理的证据攒够再出手","洞察"],["带头绕开它，走出新的做法","开创"]]],
+  ["表达","把一件复杂的想法讲给外行听？",[["打个比方，一句话讲到心里","表达"],["画图、举例，结构化拆解","洞察"],["看对方是谁，换他听得懂的话","共情"],["只对懂的人讲，不懂的不费口舌","独立"]]],
+  ["耗竭","连轴转三个月，你快撑不住了？",[["强制休息，天塌不下来","独立"],["向信任的人开口求助","共情"],["换一种节奏，把事做完但慢下来","经营"],["硬撑到节点结束再说","担当"]]],
+  ["留名","如果历史为你写一行小传，你希望是？",[["『TA 改写了规则』","决断"],["『TA 守住了要紧的东西』","担当"],["『TA 走了没人走过的路』","开创"],["『TA 活成了自己的答案』","独立"]]],
+  ["功失","你的方案被采纳，功劳却记在别人名下？",[["下次开会前，先让关键人物知道出处","经营"],["值不值由结果说话，不争一时","独立"],["当场温和地把事实摆清楚","表达"],["复盘谁在什么处境下做了这个选择","洞察"]]],
+  ["组队","自由组队完成一件事，你怎么挑人？",[["靠谱第一，能力可以慢慢练","担当"],["看谁和谁之间能产生化学反应","共情"],["列出资源与缺口，按需配置","经营"],["敢用有争议但锋利的人","决断"]]],
+  ["守诺","答应的事，代价突然翻了三倍？",[["咬牙做完，承诺比成本重","担当"],["重新谈条件，把账摆到桌面上","经营"],["找一条更聪明的路径兑现","开创"],["当断则断，说明原因然后退出","决断"]]],
+  ["歧路","大多数人都舒服的旧做法，你觉得有更好的？",[["先小范围验证，拿结果说话","开创"],["把利弊写成清晰的一页纸","表达"],["联合同样不满的人一起推动","经营"],["等一个非改不可的时机","洞察"]]],
+  ["掌声","毫无预兆地被推上台前受赞誉？",[["大方接住，这是应得的","表达"],["警觉：为什么是现在、是谁推动","洞察"],["把光转向身后一起做事的人","共情"],["礼貌致谢，然后回到自己的节奏","独立"]]],
+  ["冷场","聚会上出现无人发言的沉默时刻？",[["先开口，接住这份尴尬","表达"],["观察谁欲言又止，递个话头","共情"],["正好，趁机想想自己的事","独立"],["在脑内把场中每个人的关系捋一遍","洞察"]]],
+  ["余烬","一场硬仗打完，突然闲下来？",[["立刻寻找下一个目标","决断"],["整理复盘，把经验存进方法库","洞察"],["补觉、散步，把自己找回来","独立"],["约重要的人吃饭，回补关系","共情"]]],
+  ["传承","把你最得意的本事教给别人？",[["先讲原理，再让他自己摔跤","洞察"],["编成步骤清单，照做就会","经营"],["陪他做一遍，错处当场指正","担当"],["用故事和比方，让他自己悟","表达"]]
+]];
+
+/* ========== 状态与流程 ========== */
+const $=s=>document.querySelector(s);
+const state={gender:"all",answers:QUESTIONS.map(()=>null),i:0,timer:null,result:null};
+const CN=["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","廿一","廿二","廿三","廿四"];
+if("scrollRestoration" in history)history.scrollRestoration="manual";
+function goTop(){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;}
+
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(id).classList.add("on");goTop();}
+
+$("#startBtn").onclick=()=>show("#preference");
+$("#prefBack").onclick=()=>show("#intro");
+document.querySelectorAll(".pref").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".pref").forEach(x=>x.classList.remove("sel"));
+  b.classList.add("sel");state.gender=b.dataset.gender;$("#prefNext").disabled=false;
+});
+$("#prefNext").onclick=()=>{state.i=0;renderQ();show("#question");};
+
+function renderQ(){
+  goTop();
+  const q=QUESTIONS[state.i];
+  $("#topCount").textContent=`第${CN[state.i]}问`;
+  $("#progressText").textContent=`${state.i+1} / ${QUESTIONS.length}`;
+  $("#trackFill").style.width=((state.i)/QUESTIONS.length*100)+"%";
+  $("#sceneTag").textContent=q[0];
+  $("#questionText").textContent=q[1];
+  $("#answerList").innerHTML=q[2].map((o,j)=>
+    `<button class="ans ${state.answers[state.i]===j?"sel":""}" data-j="${j}"><span class="abc">${"ABCD"[j]}</span><span>${o[0]}</span></button>`).join("");
+  $("#autoHint").classList.remove("on");
+  $("#nextBtn").disabled=state.answers[state.i]===null;
+  $("#nextBtn").textContent=state.i===QUESTIONS.length-1?"生成镜鉴":"下一问";
+  document.querySelectorAll(".ans").forEach(btn=>btn.onclick=()=>{
+    state.answers[state.i]=+btn.dataset.j;
+    document.querySelectorAll(".ans").forEach(x=>x.classList.remove("sel"));
+    btn.classList.add("sel");
+    $("#autoHint").textContent=state.i===QUESTIONS.length-1?"已选择，正在铸镜…":"已选择，正在翻页…";
+    $("#autoHint").classList.add("on");
+    clearTimeout(state.timer);state.timer=setTimeout(advance,450);
+  });
+}
+function advance(){
+  if(state.answers[state.i]===null)return;
+  if(state.i<QUESTIONS.length-1){state.i++;renderQ();}
+  else{finish();show("#result");renderResult();}
+}
+$("#prevBtn").onclick=()=>{if(state.i>0){state.i--;renderQ();}};
+$("#nextBtn").onclick=advance;
+
+/* ========== 结果计算 ========== */
+function finish(){
+  const raw=Object.fromEntries(DIMS.map(d=>[d,12]));
+  state.answers.forEach((a,i)=>{raw[QUESTIONS[i][2][a][1]]+=9});
+  const vals=Object.values(raw),max=Math.max(...vals),min=Math.min(...vals);
+  const scores=DIMS.map(d=>Math.round(38+(raw[d]-min)/(max-min||1)*60));
+  const pool=PEOPLE.filter(p=>state.gender==="all"||p.gender===state.gender);
+  const dist=p=>{const v=ARCH[p.arch].vec;return Math.sqrt(v.reduce((s,x,i)=>s+(x-scores[i])**2,0))};
+  const ranked=pool.map(p=>({p,d:dist(p)})).sort((a,b)=>a.d-b.d);
+  const person=ranked[0].p,a=ARCH[person.arch];
+  const similarity=Math.max(78,Math.min(97,Math.round(100-ranked[0].d/4.6)));
+  const closeCount=ranked.filter(r=>r.d<=ranked[0].d*1.08).length;
+  const rarity=Math.max(65,Math.min(99,Math.round((pool.length-closeCount+1)/pool.length*100)));
+  const kin=pool.filter(p=>p.arch===person.arch).length;
+  const top5=ranked.slice(0,5).map(r=>({name:r.p.name,era:r.p.era,role:r.p.role,pct:Math.max(55,Math.min(similarity,Math.round(100-r.d/4.6)))}));
+  state.result={person,a,scores,similarity,top:DIMS.map((d,i)=>[d,scores[i]]).sort((x,y)=>y[1]-x[1]).slice(0,3),top5,rarity,kin,poolSize:pool.length};
+}
+
+function countUp(el,to,dur){dur=dur||1200;const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/dur);el.textContent=Math.round(to*(1-Math.pow(1-k,3)))+"%";if(k<1)requestAnimationFrame(step)};el.textContent="0%";requestAnimationFrame(step);setTimeout(()=>el.textContent=to+"%",dur+200)}
+
+function renderResult(){
+  const {person,a,scores,similarity,top,top5,rarity,kin,poolSize}=state.result;
+  $("#sealChar").textContent=person.name.slice(0,1);
+  $("#resultName").textContent=person.name;
+  $("#resultTitle").textContent=`${person.era} · ${person.role} · ${a.label}`;
+  $("#resultQuote").textContent=`「${person.quote}」`;
+  countUp($("#matchRate"),similarity);
+  $("#dominant").textContent=`主导维度 · ${DIMS[scores.indexOf(Math.max(...scores))]} · ${a.label}`;
+  /* 人格编码 + 镜语专属解读 */
+  const [t1,s1]=top[0],[t2,s2]=top[1];
+  const lowDim=DIMS[scores.indexOf(Math.min(...scores))];
+  const code=`OCT-${AB[t1].slice(0,2)}${AB[t2].slice(0,2)}-${similarity}`;
+  $("#pcode").textContent=code;
+  const reading=[
+    DTEXT[t1].hi(s1),
+    DTEXT[t2].hi(s2),
+    DTEXT[lowDim].lo,
+    EMO[t1],
+    TIP[t1]
+  ].join("");
+  state.result.code=code;state.result.reading=reading;
+  $("#reading").textContent=reading;
+  /* 数值档案 */
+  const maxS=Math.max(...scores);
+  $("#statRow").innerHTML=[
+    [similarity+"%","骨相契合"],[rarity+"%","骨相稀有度"],[maxS+" 分","主导维度峰值"],[kin+" / "+poolSize,"同门人物"]
+  ].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join("");
+  /* 雷达图 */
+  const R=100,CX=160,CY=165,N=DIMS.length,pt=(i,r)=>{const ang=-Math.PI/2+i*2*Math.PI/N;return [CX+Math.cos(ang)*r,CY+Math.sin(ang)*r]};
+  const rings=[0.25,0.5,0.75,1].map(k=>`<polygon points="${DIMS.map((_,i)=>pt(i,R*k).join(",")).join(" ")}" fill="none" stroke="rgba(201,162,94,${k===1?".4":".16"})"/>`).join("");
+  const axes=DIMS.map((_,i)=>`<line x1="${CX}" y1="${CY}" x2="${pt(i,R)[0]}" y2="${pt(i,R)[1]}" stroke="rgba(201,162,94,.16)"/>`).join("");
+  const poly=DIMS.map((_,i)=>pt(i,R*scores[i]/100).join(",")).join(" ");
+  const labels=DIMS.map((d,i)=>{const [x,y]=pt(i,R+26);return `<text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" fill="#a89872">${d} ${AB[d]}</text><text x="${x}" y="${y+17}" text-anchor="middle" font-size="10" fill="#e8c98a">${scores[i]}</text>`}).join("");
+  $("#radarBox").innerHTML=`<svg viewBox="0 0 320 330" width="320">${rings}${axes}
+    <polygon points="${poly}" fill="rgba(232,201,138,.14)" stroke="#e8c98a" stroke-width="1.6" style="stroke-dasharray:900;stroke-dashoffset:900;animation:drawline 1.4s ease forwards"/>
+    ${DIMS.map((_,i)=>`<circle cx="${pt(i,R*scores[i]/100)[0]}" cy="${pt(i,R*scores[i]/100)[1]}" r="2.6" fill="#e8c98a"/>`).join("")}
+    ${labels}</svg>`;
+  /* 维度条 */
+  $("#dimensionGrid").innerHTML=DIMS.map(d=>{const i=DIMS.indexOf(d);
+    return `<div class="bar-row"><span>${d} ${AB[d]}</span><span class="bar-track"><i data-w="${scores[i]}"></i></span><b>${scores[i]}</b></div>`}).join("");
+  requestAnimationFrame(()=>{document.querySelectorAll(".bar-track i").forEach(el=>el.style.width=el.dataset.w+"%");document.querySelectorAll(".rank .nm u").forEach(el=>el.style.width=el.dataset.w+"%")});
+  /* 同骨榜 */
+  $("#kinList").innerHTML=top5.map((r,i)=>
+    `<div class="rank ${i===0?"first":""}"><span class="rk">${["首","贰","叁","肆","伍"][i]}</span><span class="nm"><b>${r.name}</b><small>${r.era} · ${r.role}</small><i><u data-w="${r.pct}"></u></i></span><span class="pct">${r.pct}%</span></div>`).join("");
+  /* 共振 */
+  const resoMap={决断:"在需要拍板的时刻，你收束噪音、抓住主线，这与TA如出一辙。",共情:"你能感知他人处境，把关系本身当作局面的一部分。",开创:"旧答案失效时，你敢于另起一行，自己写新的。",洞察:"你相信真正的答案藏在表象之下的规律里。",表达:"你擅长让模糊的感受获得清晰的形状。",经营:"你看得见资源的组合方式与长期价值。",独立:"你有一套不轻易被外界带走的内在坐标。",担当:"越到关键时刻，你越愿意站出来。"};
+  $("#commonGround").innerHTML=top.map(([d,s],i)=>
+    `<div class="note"><b>${["第一底色","隐藏天赋","长期优势"][i]} · ${d}</b><p>${resoMap[d]}这正是你与${person.name}共享的骨相。</p></div>`).join("");
+  $("#blindspot").textContent=a.blind;  $("#risk").textContent=`当「${a.tags[0]}」被过度使用，它会变成你唯一的答案。压力之下，记得检查自己是否忽略了关系、节奏或新的证据。`;
+  $("#advice").textContent=a.advice;
+  /* 台词 */
+  const LINES={helm:["先把局面稳住，再谈输赢。","位置越高，越要对结果负责。","我签名的每一步，都算数。"],weave:["别只看眼前这一手。","信息不全时，克制也是行动。","胜负在动手之前，已有轮廓。"],breach:["没有路，就走出第一步。","试错不是浪费，是地图的成本。","边界之外，才有新的答案。"],mesh:["先听懂，再说服。","关系不是妥协，是通往结果的桥。","让不同的人，看见同一个方向。"],probe:["先求证，再下结论。","真知经得起反复追问。","慢一点没关系，但要更接近真实。"],torch:["我把说不清的感受，变成看得见的东西。","生活不是材料，生活本身就是作品。","敏感不是脆弱，是另一种看见。"],ward:["你们先走，我来守最后一段。","答应过的事，就要有回音。","真正的强大，是让身边的人安心。"],stake:["信用是最贵的本钱。","会算账，也要会看长远。","让价值流动起来，才算真正拥有。"],drift:["我不逃离世界，我只是选择自己的位置。","热闹不等于值得。","守住自己，才有余力理解别人。"],forge:["向来如此，不代表理应如此。","改变要有锋芒，也要有路径。","如果没人先走，那就从我开始。"]};
+  $("#lines").innerHTML=[person.quote,...LINES[person.arch]].slice(0,3).map(x=>`<div class="line-card">「${x}」</div>`).join("");
+  /* 完整报告入口 */
+  $("#unlockBox").hidden=!SHOP_URL;
+  if(SHOP_URL)$("#unlockBtn").onclick=()=>location.href=SHOP_URL;
+  $("#exportBtn").onclick=exportCard;
+}
+
+$("#restartBtn").onclick=()=>{state.answers=QUESTIONS.map(()=>null);state.i=0;show("#intro");};
+$("#saveClose").onclick=()=>$("#saveMask").classList.remove("on");
+
+/* ========== 分享长图 ========== */
+function exportCard(){
+  const {person,a,scores,similarity,top,top5,rarity,kin,reading,code}=state.result;
+  const c=document.createElement("canvas"),x=c.getContext("2d");
+  const W=860,S=2;c.width=W*S;c.height=W*S; // 预设 1:1.35 比例在下方重设
+  const font=(sz,w)=>`${w||400} ${sz}px "Noto Serif SC","Songti SC","STSong","SimSun",serif`;
+  const wrap=(val,mw,sz,w)=>{x.font=font(sz,w);const rows=[];let line="";for(const ch of String(val)){if(line&&x.measureText(line+ch).width>mw){rows.push(line);line=ch}else line+=ch}if(line)rows.push(line);return rows};
+  const BLOCK=(val,mw,sz,lh,w)=>wrap(val,mw,sz,w).length*lh;
+  // 高度预算
+  const M=56,P=40,iw=W-M*2-P*2;
+  const head=470, radar=430, bars=90+DIMS.length*44+30, reso=90+top.length*96, kinH=78+top5.length*46, read=130+wrap(reading,iw-64,15).length*30, blind=90+Math.max(BLOCK(a.blind,iw-72,20,34),150), lines=90+3*64, foot=120;
+  const H=M+head+30+radar+30+bars+30+reso+30+kinH+30+read+30+blind+30+lines+foot;c.width=W*S;c.height=H*S;x.scale(S,S);
+  // 背景
+  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#12100b");bg.addColorStop(1,"#0a0806");x.fillStyle=bg;x.fillRect(0,0,W,H);
+  const halo=x.createRadialGradient(W/2,180,0,W/2,180,W*.7);halo.addColorStop(0,"rgba(201,162,94,.14)");halo.addColorStop(1,"transparent");x.fillStyle=halo;x.fillRect(0,0,W,520);
+  const card=(ty,h)=>{x.strokeStyle="rgba(201,162,94,.3)";x.lineWidth=1;x.strokeRect(M,ty,W-M*2,h)};
+  const title=(t,ty)=>{x.fillStyle="#c9a25e";x.font=font(19,700);x.textAlign="left";x.fillText(t,M+P,ty)};
+  const para=(v,tx,ty,mw,sz,lh,col,w)=>{x.font=font(sz,w);x.fillStyle=col;x.textAlign="left";wrap(v,mw,sz,w).forEach((r,i)=>x.fillText(r,tx,ty+i*lh))};
+  let y=M;
+  // 头部
+  x.save();x.translate(W/2-40,y+58);x.rotate(-0.12);x.fillStyle="#a63a2b";x.fillRect(-34,-34,68,68);x.fillStyle="#f3e2c8";x.font=font(34,900);x.textAlign="center";x.textBaseline="middle";x.fillText(person.name[0],0,2);x.restore();
+  x.fillStyle="#c9a25e";x.font=font(15,400);x.textAlign="center";x.textBaseline="alphabetic";
+  x.fillText("观 我 · 镜 鉴 已 成",W/2,y+140);
+  x.fillStyle="#e9dfc7";x.font=font(52,900);x.fillText(person.name,W/2,y+205);
+  x.fillStyle="#a89872";x.font=font(16,400);x.fillText(`${person.era} · ${person.role} · ${a.label}`,W/2,y+238);
+  x.fillStyle="#e8c98a";x.font=font(26,900);x.fillText(similarity+"%",W/2-46,y+300);
+  x.fillStyle="#a89872";x.font=font(13,400);x.fillText("骨相契合",W/2+52,y+300);
+  x.fillStyle="#e9dfc7";x.font=font(15,400);x.fillText(`主导维度 · ${DIMS[scores.indexOf(Math.max(...scores))]}`,W/2,y+340);
+  x.fillStyle="#e8c98a";x.font=font(15,700);x.fillText(`镜骨编码 · ${code}`,W/2,y+372);
+  [[similarity+"%","骨相契合"],[rarity+"%","稀有度"],[Math.max(...scores)+"分","主导峰值"],[kin+"位","同门人物"]].forEach((s,i)=>{const cx=M+P+iw*(i*2+1)/8;
+    x.fillStyle="#e8c98a";x.font=font(16,900);x.textAlign="center";x.fillText(s[0],cx,y+412);
+    x.fillStyle="#a89872";x.font=font(11,400);x.fillText(s[1],cx,y+434)});
+  card(y,W-M*2);y+=head+30;
+  // 光谱
+  const R=118,CX=W/2,CY=y+165,N=DIMS.length,pt=(i,r)=>{const ang=-Math.PI/2+i*2*Math.PI/N;return[CX+Math.cos(ang)*r,CY+Math.sin(ang)*r]};
+  [0.25,0.5,0.75,1].forEach(k=>{x.beginPath();DIMS.forEach((_,i)=>i?x.lineTo(...pt(i,R*k)):x.moveTo(...pt(i,R*k)));x.closePath();x.strokeStyle="rgba(201,162,94,.18)";x.stroke()});
+  DIMS.forEach((_,i)=>{x.beginPath();x.moveTo(CX,CY);x.lineTo(...pt(i,R));x.strokeStyle="rgba(201,162,94,.14)";x.stroke()});
+  x.beginPath();DIMS.forEach((_,i)=>{const p=pt(i,R*scores[i]/100);i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])});x.closePath();
+  x.fillStyle="rgba(232,201,138,.16)";x.fill();x.strokeStyle="#e8c98a";x.lineWidth=1.6;x.stroke();
+  DIMS.forEach((d,i)=>{const[px,py]=pt(i,R+22);x.fillStyle="#a89872";x.font=font(13,400);x.textAlign=px>CX+8?"left":px<CX-8?"right":"center";x.fillText(`${d} ${AB[d]}`,px,py+4)});
+  card(y,radar);y+=radar+30;
+  // 八维
+  title("八维细读",y+40);
+  scores.forEach((s,i)=>{const ry=y+72+i*44;x.fillStyle="#a89872";x.font=font(14,400);x.textAlign="left";x.fillText(`${DIMS[i]} ${AB[DIMS[i]]}`,M+P,ry+14);
+    x.fillStyle="rgba(233,223,199,.08)";x.fillRect(M+P+70,ry+6,iw-160,7);
+    const g=x.createLinearGradient(M+P+70,0,M+P+70+(iw-160)*s/100,0);g.addColorStop(0,"#8a6b33");g.addColorStop(1,"#e8c98a");x.fillStyle=g;
+    x.fillRect(M+P+70,ry+6,(iw-160)*s/100,7);
+    x.fillStyle="#e8c98a";x.font=font(15,700);x.textAlign="right";x.fillText(s,M+W-M-P,ry+14)});
+  card(y,bars);y+=bars+30;
+  // 共振
+  title("你与 TA 的三重共振",y+40);let ry2=y+66;
+  const resoMap={决断:"收束噪音、抓住主线，做决定时不拖泥带水。",共情:"把关系当作局面的一部分，能感知他人的处境。",开创:"旧答案失效时，敢于另起一行。",洞察:"相信真正的答案藏在表象之下的规律里。",表达:"擅长让模糊的感受获得清晰的形状。",经营:"看得见资源的组合方式与长期价值。",独立:"有一套不轻易被外界带走的内在坐标。",担当:"越到关键时刻，越愿意站出来。"};
+  top.forEach(([d],i)=>{x.strokeStyle="rgba(201,162,94,.35)";x.strokeRect(M+P,ry2,iw,82);
+    x.fillStyle="#c9a25e";x.font=font(14,700);x.textAlign="left";x.fillText(["第一底色","隐藏天赋","长期优势"][i]+" · "+d,M+P+16,ry2+28);
+    x.fillStyle="#c4b58f";x.font=font(14,400);x.fillText(resoMap[d],M+P+16,ry2+56);ry2+=96});
+  card(y,reso);y+=reso+30;
+  // 同骨榜
+  title("同骨榜 · 与你骨相最近的五人",y+40);
+  top5.forEach((r,i)=>{const ry3=y+66+i*46;
+    x.fillStyle=i===0?"#e8c98a":"#c9a25e";x.font=font(14,700);x.textAlign="left";x.fillText(["首","贰","叁","肆","伍"][i],M+P+6,ry3+18);
+    x.fillStyle="#e9dfc7";x.font=font(14,700);x.fillText(r.name,M+P+40,ry3+16);const nw=x.measureText(r.name).width;
+    x.fillStyle="#a89872";x.font=font(11,400);x.fillText(r.era+" · "+r.role,M+P+40+nw+12,ry3+16);
+    x.fillStyle="rgba(233,223,199,.08)";x.fillRect(M+P+40,ry3+28,iw-150,4);
+    const kg=x.createLinearGradient(M+P+40,0,M+P+40+(iw-150)*r.pct/100,0);kg.addColorStop(0,"#8a6b33");kg.addColorStop(1,"#e8c98a");x.fillStyle=kg;
+    x.fillRect(M+P+40,ry3+28,(iw-150)*r.pct/100,4);
+    x.fillStyle="#e8c98a";x.font=font(15,900);x.textAlign="right";x.fillText(r.pct+"%",M+P+iw-8,ry3+20)});
+  card(y,kinH);y+=kinH+30;
+  // 镜语
+  title("镜语 · 专属解读",y+40);
+  x.strokeStyle="rgba(201,162,94,.35)";x.strokeRect(M+P,y+66,iw,read-96);
+  para(reading,M+P+16,y+100,iw-64,15,30,"#c4b58f");
+  card(y,read);y+=read+30;
+  // 暗面
+  title("镜中暗面 · 可能的盲点",y+40);
+  x.strokeStyle="rgba(201,162,94,.35)";x.strokeRect(M+P,y+66,iw,blind-96);
+  para(a.blind,M+P+16,y+96,iw-32,15,28,"#c4b58f");
+  card(y,blind);y+=blind+30;
+  // 台词
+  title("TA 会说的三句话",y+40);let ly=y+66;
+  const LINES={helm:["先把局面稳住，再谈输赢。","位置越高，越要对结果负责。","我签名的每一步，都算数。"],weave:["别只看眼前这一手。","信息不全时，克制也是行动。","胜负在动手之前，已有轮廓。"],breach:["没有路，就走出第一步。","试错不是浪费，是地图的成本。","边界之外，才有新的答案。"],mesh:["先听懂，再说服。","关系不是妥协，是通往结果的桥。","让不同的人，看见同一个方向。"],probe:["先求证，再下结论。","真知经得起反复追问。","慢一点没关系，但要更接近真实。"],torch:["我把说不清的感受，变成看得见的东西。","生活不是材料，生活本身就是作品。","敏感不是脆弱，是另一种看见。"],ward:["你们先走，我来守最后一段。","答应过的事，就要有回音。","真正的强大，是让身边的人安心。"],stake:["信用是最贵的本钱。","会算账，也要会看长远。","让价值流动起来，才算真正拥有。"],drift:["我不逃离世界，我只是选择自己的位置。","热闹不等于值得。","守住自己，才有余力理解别人。"],forge:["向来如此，不代表理应如此。","改变要有锋芒，也要有路径。","如果没人先走，那就从我开始。"]};
+  [person.quote,...LINES[person.arch]].slice(0,3).forEach(t=>{x.strokeStyle="rgba(201,162,94,.45)";x.setLineDash([4,4]);x.strokeRect(M+P,ly,iw,52);x.setLineDash([]);
+    x.fillStyle="#e9dfc7";x.font=font(15,400);x.fillText(`「${t}」`,M+P+16,ly+32);ly+=64});
+  card(y,lines);y+=lines;
+  x.fillStyle="#5e543f";x.font=font(12,400);x.textAlign="center";x.fillText("观我 · 历史人格镜鉴 · 趣味测试结果",W/2,y+62);
+  const url=c.toDataURL("image/png");
+  $("#saveImg").src=url;$("#saveMask").classList.add("on");
+}
+</script>
+</body>
+</html>
